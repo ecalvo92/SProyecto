@@ -1,15 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SWeb.Models;
 
 namespace SWeb.Controllers
 {
     public class LoginController : Controller
     {
-        public IActionResult InicioSesion()
+        [HttpGet]
+        public IActionResult CrearCuenta()
         {
             return View();
         }
 
-        public IActionResult CrearCuenta()
+        [HttpPost]
+        public IActionResult CrearCuenta(Usuario model)
+        {
+            return View();
+        }
+
+
+
+        public IActionResult InicioSesion()
         {
             return View();
         }

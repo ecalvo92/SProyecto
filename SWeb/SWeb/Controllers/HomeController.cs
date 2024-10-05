@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using SWeb.Models;
-using System.Diagnostics;
 
 namespace SWeb.Controllers
 {
