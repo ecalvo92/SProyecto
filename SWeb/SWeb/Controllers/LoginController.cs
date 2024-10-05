@@ -19,15 +19,31 @@ namespace SWeb.Controllers
 
 
 
+        [HttpGet]
         public IActionResult InicioSesion()
         {
             return View();
         }
 
+        [HttpPost]
+        public IActionResult InicioSesion(Usuario model)
+        {
+            return View();
+        }
+
+
+
+        [HttpGet]
         public IActionResult RecuperarAcceso()
         {
             return View();
-        }        
+        }
+
+        [HttpPost]
+        public IActionResult RecuperarAcceso(Usuario model)
+        {
+            return View();
+        }
 
     }
 }
