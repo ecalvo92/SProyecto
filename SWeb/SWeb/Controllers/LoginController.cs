@@ -5,6 +5,14 @@ namespace SWeb.Controllers
 {
     public class LoginController : Controller
     {
+        private readonly IHttpClientFactory _httpClient;
+        public LoginController(IHttpClientFactory httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
+
+
         [HttpGet]
         public IActionResult CrearCuenta()
         {
@@ -14,6 +22,19 @@ namespace SWeb.Controllers
         [HttpPost]
         public IActionResult CrearCuenta(Usuario model)
         {
+            using (var client = _httpClient.CreateClient())
+            {
+                var url = "https://localhost:7081/api/Login/CrearCuenta";
+                JsonContent datos = JsonContent.Create(model);
+
+                var response = client.PostAsync(url, datos).Result;
+
+                if (response.IsSuccessStatusCode)
+                { 
+                    var result = response.Content.ReadFromJsonAsync<Usuario>().Result;
+                }
+            }
+
             return View();
         }
 
