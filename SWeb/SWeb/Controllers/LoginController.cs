@@ -30,14 +30,18 @@ namespace SWeb.Controllers
                 JsonContent datos = JsonContent.Create(model);
 
                 var response = client.PostAsync(url, datos).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
 
-                if (response.IsSuccessStatusCode)
-                { 
-                    var result = response.Content.ReadFromJsonAsync<Usuario>().Result;
+                if (result != null && result.Codigo == 0)
+                {
+                    return RedirectToAction("InicioSesion", "Login");
+                }
+                else
+                {
+                    ViewBag.Mensaje = result!.Mensaje;
+                    return View();
                 }
             }
-
-            return View();
         }
 
 

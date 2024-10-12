@@ -18,6 +18,10 @@
 
                             <p class="text-center">Registro de usuarios</p>
 
+                            @if (ViewBag.Mensaje != null)
+                            {
+                                <div class="alert alert-secondary text-center">@ViewBag.Mensaje</div>                            }
+
                             <form asp-action="CrearCuenta" asp-controller="Login">
 
                                 <div class="mb-3">

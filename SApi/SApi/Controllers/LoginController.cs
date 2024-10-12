@@ -21,15 +21,21 @@ namespace SApi.Controllers
         {
             using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
             {
+                var respuesta = new Respuesta();
                 var result = context.Execute("CrearCuenta", new { model.Identificacion, model.Nombre, model.CorreoElectronico, model.Contrasenna });
 
                 if (result > 0)
-                { 
-                
+                {
+                    respuesta.Codigo = 0;
                 }
-            }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "Su información no se ha registrado correctamente";
+                }
 
-            return Ok(model);
+                return Ok(respuesta);
+            }
         }
 
     }
