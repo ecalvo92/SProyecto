@@ -34,7 +34,7 @@ namespace SWeb.Controllers
 
                 if (result != null && result.Codigo == 0)
                 {
-                    return RedirectToAction("InicioSesion", "Login");
+                    return RedirectToAction("IniciarSesion", "Login");
                 }
                 else
                 {
@@ -47,15 +47,32 @@ namespace SWeb.Controllers
 
 
         [HttpGet]
-        public IActionResult InicioSesion()
+        public IActionResult IniciarSesion()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult InicioSesion(Usuario model)
+        public IActionResult IniciarSesion(Usuario model)
         {
-            return View();
+            using (var client = _http.CreateClient())
+            {
+                var url = _conf.GetSection("Variables:UrlApi").Value + "Login/IniciarSesion";
+                JsonContent datos = JsonContent.Create(model);
+
+                var response = client.PostAsync(url, datos).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    return RedirectToAction("Inicio", "Home");
+                }
+                else
+                {
+                    ViewBag.Mensaje = result!.Mensaje;
+                    return View();
+                }
+            }
         }
 
 

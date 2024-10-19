@@ -38,5 +38,31 @@ namespace SApi.Controllers
             }
         }
 
+
+        [HttpPost]
+        [Route("IniciarSesion")]
+        public IActionResult IniciarSesion(Usuario model)
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+                var result = context.QueryFirstOrDefault<Usuario>("IniciarSesion", new { model.CorreoElectronico, model.Contrasenna });
+
+                if (result != null)
+                {
+                    respuesta.Codigo = 0;
+                    respuesta.Contenido = result;
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "Su información no se ha validado correctamente";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+        
+
     }
 }
