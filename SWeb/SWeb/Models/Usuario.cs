@@ -8,5 +8,6 @@
         public string CorreoElectronico { get; set; } = string.Empty;
         public string Contrasenna { get; set; } = string.Empty;
         public string ConfirmarContrasenna { get; set; } = string.Empty;
+        public string NombreRol { get; set; } = string.Empty;
     }
 }

@@ -55,8 +55,16 @@ namespace SApi.Controllers
 
                 if (result != null)
                 {
-                    respuesta.Codigo = 0;
-                    respuesta.Contenido = result;
+                    if (result.UsaClaveTemp && result.Vigencia < DateTime.Now)
+                    {
+                        respuesta.Codigo = -1;
+                        respuesta.Mensaje = "Su información de acceso temporal ha expirado";
+                    }
+                    else
+                    {
+                        respuesta.Codigo = 0;
+                        respuesta.Contenido = result;
+                    }
                 }
                 else
                 {
