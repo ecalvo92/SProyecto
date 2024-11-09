@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SWeb.Models;
 using SWeb.Servicios;
+using System.Net.Http.Headers;
 using System.Security.Cryptography.Xml;
 using System.Text.Json;
 
@@ -45,6 +46,7 @@ namespace SWeb.Controllers
                                 
                 JsonContent datos = JsonContent.Create(model);
 
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer " + HttpContext.Session.GetString("TokenUsuario"));
                 var response = client.PutAsync(url, datos).Result;
                 var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
 
@@ -67,6 +69,7 @@ namespace SWeb.Controllers
             {
                 string url = _conf.GetSection("Variables:UrlApi").Value + "Usuario/ConsultarUsuarios";
 
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("TokenUsuario"));
                 var response = client.GetAsync(url).Result;
                 var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
 

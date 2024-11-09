@@ -1,13 +1,18 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using SApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace SApi.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
@@ -19,6 +24,7 @@ namespace SApi.Controllers
             _conf = conf;
             _env = env;
         }
+
 
         [HttpPost]
         [Route("CrearCuenta")]
@@ -62,6 +68,8 @@ namespace SApi.Controllers
                     }
                     else
                     {
+                        result.Token = GenerarToken(result);
+
                         respuesta.Codigo = 0;
                         respuesta.Contenido = result;
                     }
@@ -165,7 +173,6 @@ namespace SApi.Controllers
             return Convert.ToBase64String(array);
         }
 
-
         private string Decrypt(string texto)
         {
             byte[] iv = new byte[16];
@@ -190,7 +197,6 @@ namespace SApi.Controllers
             }
         }
 
-
         private void EnviarCorreo(string destino, string asunto, string contenido)
         {
             string cuenta = _conf.GetSection("Variables:CorreoEmail").Value!;
@@ -213,6 +219,25 @@ namespace SApi.Controllers
             {
                 client.Send(message);
             }
+        }
+
+        private string GenerarToken(Usuario model)
+        {
+            string SecretKey = _conf.GetSection("Variables:Llave").Value!;
+
+            List<Claim> claims = new List<Claim>();
+            claims.Add(new Claim("IdUsuario", model.Consecutivo.ToString()));
+            claims.Add(new Claim("IdRol", model.ConsecutivoRol.ToString()));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(20),
+                signingCredentials: cred);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
     }

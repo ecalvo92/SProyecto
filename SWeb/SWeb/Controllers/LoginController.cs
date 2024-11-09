@@ -79,6 +79,8 @@ namespace SWeb.Controllers
 
                     HttpContext.Session.SetString("Consecutivo", datosUsuario!.Consecutivo.ToString());
                     HttpContext.Session.SetString("NombreUsuario", datosUsuario!.Nombre);
+                    HttpContext.Session.SetString("TokenUsuario", datosUsuario!.Token);
+                    HttpContext.Session.SetInt32("RolUsuario", datosUsuario!.ConsecutivoRol);
                     return RedirectToAction("Inicio", "Home");
                 }
                 else

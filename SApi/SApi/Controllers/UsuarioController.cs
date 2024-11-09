@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using SApi.Models;
 
 namespace SApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsuarioController : ControllerBase
@@ -16,6 +18,7 @@ namespace SApi.Controllers
         {
             _conf = conf;        
         }
+
 
         [HttpPut]
         [Route("ActualizarContrasenna")]
@@ -43,6 +46,7 @@ namespace SApi.Controllers
             }
         }
 
+
         [HttpGet]
         [Route("ConsultarUsuarios")]
         public IActionResult ConsultarUsuarios()
@@ -66,6 +70,7 @@ namespace SApi.Controllers
                 return Ok(respuesta);
             }
         }
+
 
     }
 }
