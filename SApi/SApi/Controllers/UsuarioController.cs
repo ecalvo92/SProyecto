@@ -46,6 +46,31 @@ namespace SApi.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("ActualizarPerfil")]
+        public IActionResult ActualizarPerfil(Usuario model)
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+
+                var result = context.Execute("ActualizarPerfil", new { model.Consecutivo, model.Identificacion, 
+                    model.Nombre, model.CorreoElectronico, model.ConsecutivoRol });
+
+                if (result > 0)
+                {
+                    respuesta.Codigo = 0;
+                    respuesta.Mensaje = "Su información de perfil se ha actualizado correctamente";
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "Su información de perfil no se ha actualizado correctamente";
+                }
+
+                return Ok(respuesta);
+            }
+        }
 
         [HttpGet]
         [Route("ConsultarUsuarios")]
@@ -71,6 +96,29 @@ namespace SApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ConsultarUsuario")]
+        public IActionResult ConsultarUsuario(int Consecutivo)
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+                var result = context.QueryFirstOrDefault<Usuario>("ConsultarUsuario", new { Consecutivo });
+
+                if (result != null)
+                {
+                    respuesta.Codigo = 0;
+                    respuesta.Contenido = result;
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "No hay usuarios registrados en este momento";
+                }
+
+                return Ok(respuesta);
+            }
+        }
 
     }
 }

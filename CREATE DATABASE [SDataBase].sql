@@ -45,9 +45,11 @@ GO
 
 SET IDENTITY_INSERT [dbo].[tUsuario] ON 
 GO
-INSERT [dbo].[tUsuario] ([Consecutivo], [Identificacion], [Nombre], [CorreoElectronico], [Contrasenna], [Activo], [ConsecutivoRol], [UsaClaveTemp], [Vigencia]) VALUES (7, N'304590415', N'Eduardo 1', N'ecalvo90415@ufide.ac.cr', N'ZpvzSTJB8CSeZ4jKi5w/nw==', 1, 2, 1, CAST(N'2024-10-26T16:02:55.660' AS DateTime))
+INSERT [dbo].[tUsuario] ([Consecutivo], [Identificacion], [Nombre], [CorreoElectronico], [Contrasenna], [Activo], [ConsecutivoRol], [UsaClaveTemp], [Vigencia]) VALUES (7, N'304590415', N'EDUARDO JOSE CALVO CASTILLO', N'ecalvo90415@ufide.ac.cr', N'vq6iL/cYD92ZbcRTmCttQA==', 1, 1, 0, CAST(N'2024-11-16T08:48:07.430' AS DateTime))
 GO
-INSERT [dbo].[tUsuario] ([Consecutivo], [Identificacion], [Nombre], [CorreoElectronico], [Contrasenna], [Activo], [ConsecutivoRol], [UsaClaveTemp], [Vigencia]) VALUES (8, N'304590416', N'Eduardo 2', N'ecalvo90416@ufide.ac.cr', N'Sgzn/gAnGHGe55pefazs6Q==', 1, 2, 0, CAST(N'2024-10-26T15:53:38.173' AS DateTime))
+INSERT [dbo].[tUsuario] ([Consecutivo], [Identificacion], [Nombre], [CorreoElectronico], [Contrasenna], [Activo], [ConsecutivoRol], [UsaClaveTemp], [Vigencia]) VALUES (8, N'304590416', N'FRANCINI DE LOS ANGELES ROMERO ARAYA', N'ecalvo90416@ufide.ac.cr', N'Sgzn/gAnGHGe55pefazs6Q==', 1, 2, 0, CAST(N'2024-11-16T08:48:39.217' AS DateTime))
+GO
+INSERT [dbo].[tUsuario] ([Consecutivo], [Identificacion], [Nombre], [CorreoElectronico], [Contrasenna], [Activo], [ConsecutivoRol], [UsaClaveTemp], [Vigencia]) VALUES (9, N'304590417', N'MERCEDES FRANCISCA MAROTO HERNANDEZ', N'ecalvo90417@ufide.ac.cr', N'b+SdtkM0Embs98KX7RA5fA==', 1, 2, 0, CAST(N'2024-11-16T10:16:23.780' AS DateTime))
 GO
 SET IDENTITY_INSERT [dbo].[tUsuario] OFF
 GO
@@ -83,6 +85,53 @@ BEGIN
 			UsaClaveTemp = @UsaClaveTemp,
 			Vigencia = @Vigencia
 	WHERE	Consecutivo = @Consecutivo
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[ActualizarPerfil]
+	@Consecutivo		bigint,
+	@Identificacion		varchar(20),
+	@Nombre				varchar(255),
+	@CorreoElectronico	varchar(80),
+	@ConsecutivoRol		smallint
+AS
+BEGIN
+	
+	IF NOT EXISTS(SELECT 1 FROM dbo.tUsuario
+				  WHERE (Identificacion = @Identificacion OR CorreoElectronico = @CorreoElectronico)
+					AND Consecutivo != @Consecutivo)
+	BEGIN
+
+		UPDATE	dbo.tUsuario
+		SET		Identificacion = @Identificacion,
+				Nombre = @Nombre,
+				CorreoElectronico = @CorreoElectronico,
+				ConsecutivoRol = CASE WHEN @ConsecutivoRol != 0
+									  THEN @ConsecutivoRol
+									  ELSE ConsecutivoRol END
+		WHERE	Consecutivo = @Consecutivo
+
+	END
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[ConsultarUsuario]
+	@Consecutivo BIGINT
+AS
+BEGIN
+	
+	SELECT	U.Consecutivo,
+			Identificacion,
+			Nombre,
+			CorreoElectronico,
+			Activo,
+			ConsecutivoRol,
+			R.NombreRol
+	  FROM	dbo.tUsuario U
+	  INNER JOIN dbo.tRol R ON U.ConsecutivoRol = R.Consecutivo
+	  WHERE U.Consecutivo = @Consecutivo
 
 END
 GO
