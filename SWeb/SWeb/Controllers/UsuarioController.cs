@@ -64,26 +64,12 @@ namespace SWeb.Controllers
         }
 
 
+
         [HttpGet]
         public IActionResult ActualizarPerfil()
         {
-            using (var client = _http.CreateClient())
-            {
-                var Consecutivo = long.Parse(HttpContext.Session.GetString("Consecutivo")!.ToString());
-                string url = _conf.GetSection("Variables:UrlApi").Value + "Usuario/ConsultarUsuario?Consecutivo=" + Consecutivo;
-
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("TokenUsuario"));
-                var response = client.GetAsync(url).Result;
-                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
-
-                if (result != null && result.Codigo == 0)
-                {
-                    var datosContenido = JsonSerializer.Deserialize<Usuario>((JsonElement)result.Contenido!);
-                    return View(datosContenido);
-                }
-
-                return View(new Usuario());
-            }
+            var Consecutivo = long.Parse(HttpContext.Session.GetString("Consecutivo")!.ToString());
+            return View(ConsultarUsuario(Consecutivo));
         }
 
         [HttpPost]
@@ -115,6 +101,40 @@ namespace SWeb.Controllers
         }
 
 
+
+        [HttpGet]
+        public IActionResult ActualizarUsuario(long Consecutivo)
+        {
+            ConsultarRoles();
+            return View(ConsultarUsuario(Consecutivo));
+        }
+
+        [HttpPost]
+        public IActionResult ActualizarUsuario(Usuario model)
+        {
+            using (var client = _http.CreateClient())
+            {
+                var url = _conf.GetSection("Variables:UrlApi").Value + "Usuario/ActualizarPerfil";
+
+                JsonContent datos = JsonContent.Create(model);
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("TokenUsuario"));
+                var response = client.PutAsync(url, datos).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+                
+                if (result != null && result.Codigo == 0)
+                {
+                    return RedirectToAction("ConsultarUsuarios","Usuario");
+                }
+                else
+                {
+                    ConsultarRoles();
+                    ViewBag.Mensaje = result!.Mensaje;
+                    return View();
+                }
+            }
+        }
+
         [HttpGet]
         public IActionResult ConsultarUsuarios()
         {
@@ -138,5 +158,40 @@ namespace SWeb.Controllers
             }
         }
 
+        private void ConsultarRoles()
+        {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:UrlApi").Value + "Usuario/ConsultarRoles";
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("TokenUsuario"));
+                var response = client.GetAsync(url).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    ViewBag.DropDownRoles = JsonSerializer.Deserialize<List<Rol>>((JsonElement)result.Contenido!);
+                }
+            }
+        }
+
+        private Usuario? ConsultarUsuario(long Consecutivo)
+        {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:UrlApi").Value + "Usuario/ConsultarUsuario?Consecutivo=" + Consecutivo;
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("TokenUsuario"));
+                var response = client.GetAsync(url).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    return JsonSerializer.Deserialize<Usuario>((JsonElement)result.Contenido!);
+                }
+
+                return new Usuario();
+            }
+        }
     }
 }
