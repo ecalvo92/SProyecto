@@ -69,7 +69,7 @@ namespace SWeb.Controllers
         public IActionResult ActualizarPerfil()
         {
             var Consecutivo = long.Parse(HttpContext.Session.GetString("Consecutivo")!.ToString());
-            return View(ConsultarUsuario(Consecutivo));
+            return View(ObtenerUsuario(Consecutivo));
         }
 
         [HttpPost]
@@ -106,7 +106,7 @@ namespace SWeb.Controllers
         public IActionResult ActualizarUsuario(long Consecutivo)
         {
             ConsultarRoles();
-            return View(ConsultarUsuario(Consecutivo));
+            return View(ObtenerUsuario(Consecutivo));
         }
 
         [HttpPost]
@@ -138,25 +138,37 @@ namespace SWeb.Controllers
         [HttpGet]
         public IActionResult ConsultarUsuarios()
         {
-            var consecutivo = long.Parse(HttpContext.Session.GetString("Consecutivo")!.ToString());
+           return View(ObtenerUsuarios());
+        }
 
+
+
+        [HttpPost]
+        public IActionResult ActualizarEstado(Usuario model)
+        {
             using (var client = _http.CreateClient())
             {
-                string url = _conf.GetSection("Variables:UrlApi").Value + "Usuario/ConsultarUsuarios";
+                var url = _conf.GetSection("Variables:UrlApi").Value + "Usuario/ActualizarEstado";
+
+                JsonContent datos = JsonContent.Create(model);
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("TokenUsuario"));
-                var response = client.GetAsync(url).Result;
+                var response = client.PutAsync(url, datos).Result;
                 var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
 
                 if (result != null && result.Codigo == 0)
                 {
-                    var datosContenido = JsonSerializer.Deserialize<List<Usuario>>((JsonElement)result.Contenido!);
-                    return View(datosContenido!.Where(x => x.Consecutivo != consecutivo).ToList());
+                    return RedirectToAction("ConsultarUsuarios", "Usuario");
                 }
-
-                return View(new List<Usuario>());
+                else
+                {
+                    ViewBag.Mensaje = result!.Mensaje;
+                    return View("ConsultarUsuarios", ObtenerUsuarios());
+                }
             }
         }
+
+
 
         private void ConsultarRoles()
         {
@@ -175,7 +187,7 @@ namespace SWeb.Controllers
             }
         }
 
-        private Usuario? ConsultarUsuario(long Consecutivo)
+        private Usuario? ObtenerUsuario(long Consecutivo)
         {
             using (var client = _http.CreateClient())
             {
@@ -191,6 +203,28 @@ namespace SWeb.Controllers
                 }
 
                 return new Usuario();
+            }
+        }
+
+        private List<Usuario> ObtenerUsuarios()
+        {
+            var consecutivo = long.Parse(HttpContext.Session.GetString("Consecutivo")!.ToString());
+
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:UrlApi").Value + "Usuario/ConsultarUsuarios";
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("TokenUsuario"));
+                var response = client.GetAsync(url).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    var datosContenido = JsonSerializer.Deserialize<List<Usuario>>((JsonElement)result.Contenido!);
+                    return datosContenido!.Where(x => x.Consecutivo != consecutivo).ToList();
+                }
+
+                return new List<Usuario>();
             }
         }
     }
