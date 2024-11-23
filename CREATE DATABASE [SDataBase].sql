@@ -7,6 +7,19 @@ GO
 USE [SDataBase]
 GO
 
+CREATE TABLE [dbo].[tError](
+	[Consecutivo] [bigint] IDENTITY(1,1) NOT NULL,
+	[ConsecutivoUsuario] [bigint] NOT NULL,
+	[Mensaje] [varchar](max) NOT NULL,
+	[Origen] [varchar](50) NOT NULL,
+	[FechaHora] [datetime] NOT NULL,
+ CONSTRAINT [PK_tError] PRIMARY KEY CLUSTERED 
+(
+	[Consecutivo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
 CREATE TABLE [dbo].[tRol](
 	[Consecutivo] [smallint] IDENTITY(1,1) NOT NULL,
 	[NombreRol] [varchar](50) NOT NULL,
@@ -32,6 +45,17 @@ CREATE TABLE [dbo].[tUsuario](
 	[Consecutivo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+
+SET IDENTITY_INSERT [dbo].[tError] ON 
+GO
+INSERT [dbo].[tError] ([Consecutivo], [ConsecutivoUsuario], [Mensaje], [Origen], [FechaHora]) VALUES (1, 0, N'Could not find stored procedure ''ValidarUsuarioX''.', N'/api/Login/RecuperarAcceso', CAST(N'2024-11-23T10:53:24.650' AS DateTime))
+GO
+INSERT [dbo].[tError] ([Consecutivo], [ConsecutivoUsuario], [Mensaje], [Origen], [FechaHora]) VALUES (2, 0, N'Could not find stored procedure ''ValidarUsuarioX''.', N'/api/Login/RecuperarAcceso', CAST(N'2024-11-23T10:54:03.847' AS DateTime))
+GO
+INSERT [dbo].[tError] ([Consecutivo], [ConsecutivoUsuario], [Mensaje], [Origen], [FechaHora]) VALUES (3, 7, N'Could not find stored procedure ''ConsultarUsuariosX''.', N'/api/Usuario/ConsultarUsuarios', CAST(N'2024-11-23T10:55:24.307' AS DateTime))
+GO
+SET IDENTITY_INSERT [dbo].[tError] OFF
 GO
 
 SET IDENTITY_INSERT [dbo].[tRol] ON 
@@ -89,6 +113,18 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[ActualizarEstado]
+	@Consecutivo bigint
+AS
+BEGIN
+	
+	UPDATE	dbo.tUsuario
+	SET		Activo = CASE WHEN Activo = 1 THEN 0 ELSE 1 END
+	WHERE	Consecutivo = @Consecutivo
+
+END
+GO
+
 CREATE PROCEDURE [dbo].[ActualizarPerfil]
 	@Consecutivo		bigint,
 	@Identificacion		varchar(20),
@@ -113,6 +149,17 @@ BEGIN
 		WHERE	Consecutivo = @Consecutivo
 
 	END
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[ConsultarRoles]
+	
+AS
+BEGIN
+	
+	SELECT	Consecutivo, NombreRol
+	FROM	dbo.tRol
 
 END
 GO
@@ -146,6 +193,7 @@ BEGIN
 			Nombre,
 			CorreoElectronico,
 			Activo,
+			CASE WHEN Activo = 1 THEN 'Activo' ELSE 'Inactivo' END Estado,
 			ConsecutivoRol,
 			R.NombreRol
 	  FROM	dbo.tUsuario U
@@ -203,6 +251,19 @@ BEGIN
 		AND Contrasenna = @Contrasenna
 		AND Activo = 1
 	
+END
+GO
+
+CREATE PROCEDURE [dbo].[RegistrarError]
+	@Consecutivo BIGINT,
+	@Mensaje	 VARCHAR(MAX),
+	@Origen		 VARCHAR(50)
+AS
+BEGIN
+
+	INSERT INTO dbo.tError(ConsecutivoUsuario,Mensaje,Origen,FechaHora)
+    VALUES (@Consecutivo,@Mensaje,@Origen,GETDATE())
+
 END
 GO
 
