@@ -1,0 +1,153 @@
+﻿using Dapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using SApi.Models;
+
+namespace SApi.Controllers
+{
+    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProductoController : ControllerBase
+    {
+        private readonly IConfiguration _conf;
+        public ProductoController(IConfiguration conf)
+        {
+            _conf = conf;
+        }
+
+        [HttpGet]
+        [Route("ConsultarProductos")]
+        public IActionResult ConsultarProductos()
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+                var result = context.Query<Producto>("ConsultarProductos", new { });
+
+                if (result.Any())
+                {
+                    respuesta.Codigo = 0;
+                    respuesta.Contenido = result;
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "No hay productos registrados en este momento";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [HttpGet]
+        [Route("ConsultarProducto")]
+        public IActionResult ConsultarProducto(int Consecutivo)
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+                var result = context.QueryFirstOrDefault<Producto>("ConsultarProducto", new { Consecutivo });
+
+                if (result != null)
+                {
+                    respuesta.Codigo = 0;
+                    respuesta.Contenido = result;
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "No hay productos registrados en este momento";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+
+        [HttpPut]
+        [Route("ActualizarEstadoProducto")]
+        public IActionResult ActualizarEstadoProducto(Producto model)
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+
+                var result = context.Execute("ActualizarEstadoProducto", new
+                {
+                    model.Consecutivo
+                });
+
+                if (result > 0)
+                {
+                    respuesta.Codigo = 0;
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "El estado del producto no se ha actualizado correctamente";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [HttpPost]
+        [Route("RegistrarProducto")]
+        public IActionResult RegistrarProducto(Producto model)
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+                var result = context.QueryFirstOrDefault<Producto>("RegistrarProducto", new { model.Nombre, model.Precio, model.Inventario, model.Imagen });
+
+                if (result != null)
+                {
+                    respuesta.Codigo = 0;
+                    respuesta.Mensaje = result.Consecutivo.ToString();
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "La información del producto no se ha registrado correctamente";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [HttpPut]
+        [Route("ActualizarProducto")]
+        public IActionResult ActualizarProducto(Producto model)
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+
+                var result = context.Execute("ActualizarProducto", new
+                {
+                    model.Consecutivo,
+                    model.Nombre,
+                    model.Precio,
+                    model.Inventario
+                });
+
+                if (result > 0)
+                {
+                    respuesta.Codigo = 0;
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "La información del producto no se ha actualizado correctamente";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+        
+
+    }
+}

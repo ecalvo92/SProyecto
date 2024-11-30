@@ -35,7 +35,7 @@
                 </div>
                 <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
                     <ul id="sidebarnav">
- 
+
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="@Url.Action("Inicio","Home")" aria-expanded="false">
                                 <span>
@@ -47,14 +47,23 @@
 
                         @if (Context.Session.GetString("NombreUsuario") != null && Context.Session.GetInt32("RolUsuario") == 1)
                         {
-                          <li class="sidebar-item">
-                              <a class="sidebar-link" href="@Url.Action("ConsultarUsuarios","Usuario")" aria-expanded="false">
-                                  <span>
-                                      <iconify-icon icon="solar:layers-minimalistic-bold-duotone" class="fs-6"></iconify-icon>
-                                  </span>
-                                  <span class="hide-menu">Usuarios</span>
-                              </a>
-                          </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("ConsultarUsuarios","Usuario")" aria-expanded="false">
+                                    <span>
+                                        <iconify-icon icon="solar:layers-minimalistic-bold-duotone" class="fs-6"></iconify-icon>
+                                    </span>
+                                    <span class="hide-menu">Usuarios</span>
+                                </a>
+                            </li>
+
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("ConsultarProductos","Producto")" aria-expanded="false">
+                                    <span>
+                                        <iconify-icon icon="solar:layers-minimalistic-bold-duotone" class="fs-6"></iconify-icon>
+                                    </span>
+                                    <span class="hide-menu">Productos</span>
+                                </a>
+                            </li>
                         }
 
                     </ul>
