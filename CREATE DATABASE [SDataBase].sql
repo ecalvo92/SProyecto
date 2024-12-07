@@ -7,6 +7,19 @@ GO
 USE [SDataBase]
 GO
 
+CREATE TABLE [dbo].[tCarrito](
+	[Consecutivo] [bigint] IDENTITY(1,1) NOT NULL,
+	[ConsecutivoUsuario] [bigint] NOT NULL,
+	[ConsecutivoProducto] [bigint] NOT NULL,
+	[Unidades] [int] NOT NULL,
+	[Fecha] [datetime] NOT NULL,
+ CONSTRAINT [PK_tCarrito] PRIMARY KEY CLUSTERED 
+(
+	[Consecutivo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
 CREATE TABLE [dbo].[tError](
 	[Consecutivo] [bigint] IDENTITY(1,1) NOT NULL,
 	[ConsecutivoUsuario] [bigint] NOT NULL,
@@ -61,6 +74,21 @@ CREATE TABLE [dbo].[tUsuario](
 ) ON [PRIMARY]
 GO
 
+SET IDENTITY_INSERT [dbo].[tCarrito] ON 
+GO
+INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (1, 8, 5, 3, CAST(N'2024-12-07T10:31:38.127' AS DateTime))
+GO
+INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (2, 8, 4, 3, CAST(N'2024-12-07T10:31:31.267' AS DateTime))
+GO
+INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (3, 8, 6, 3, CAST(N'2024-12-07T10:31:41.473' AS DateTime))
+GO
+INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (4, 8, 7, 3, CAST(N'2024-12-07T10:31:44.527' AS DateTime))
+GO
+INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (5, 8, 8, 3, CAST(N'2024-12-07T10:31:47.440' AS DateTime))
+GO
+SET IDENTITY_INSERT [dbo].[tCarrito] OFF
+GO
+
 SET IDENTITY_INSERT [dbo].[tError] ON 
 GO
 INSERT [dbo].[tError] ([Consecutivo], [ConsecutivoUsuario], [Mensaje], [Origen], [FechaHora]) VALUES (1, 0, N'Could not find stored procedure ''ValidarUsuarioX''.', N'/api/Login/RecuperarAcceso', CAST(N'2024-11-23T10:53:24.650' AS DateTime))
@@ -76,7 +104,15 @@ GO
 
 SET IDENTITY_INSERT [dbo].[tProducto] ON 
 GO
-INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (4, N'Play Station 5', CAST(80000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (4, N'Play Station 4', CAST(100000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+GO
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (5, N'Play Station 5', CAST(200000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+GO
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (6, N'Play Station 6', CAST(300000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+GO
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (7, N'Play Station 7', CAST(400000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+GO
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (8, N'Play Station 8', CAST(500000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
 GO
 SET IDENTITY_INSERT [dbo].[tProducto] OFF
 GO
@@ -111,6 +147,18 @@ ALTER TABLE [dbo].[tUsuario] ADD  CONSTRAINT [UK_Identificacion] UNIQUE NONCLUST
 (
 	[Identificacion] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[tCarrito]  WITH CHECK ADD  CONSTRAINT [FK_tCarrito_tProducto] FOREIGN KEY([ConsecutivoProducto])
+REFERENCES [dbo].[tProducto] ([Consecutivo])
+GO
+ALTER TABLE [dbo].[tCarrito] CHECK CONSTRAINT [FK_tCarrito_tProducto]
+GO
+
+ALTER TABLE [dbo].[tCarrito]  WITH CHECK ADD  CONSTRAINT [FK_tCarrito_tUsuario] FOREIGN KEY([ConsecutivoUsuario])
+REFERENCES [dbo].[tUsuario] ([Consecutivo])
+GO
+ALTER TABLE [dbo].[tCarrito] CHECK CONSTRAINT [FK_tCarrito_tUsuario]
 GO
 
 ALTER TABLE [dbo].[tUsuario]  WITH CHECK ADD  CONSTRAINT [FK_tUsuario_tRol] FOREIGN KEY([ConsecutivoRol])
@@ -201,6 +249,25 @@ BEGIN
 		Precio = @Precio,
 		Inventario = @Inventario
 	WHERE Consecutivo = @Consecutivo
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[ConsultarCarrito]
+	@ConsecutivoUsuario BIGINT
+AS
+BEGIN
+	
+	SELECT	C.Consecutivo,
+			C.ConsecutivoProducto,
+			P.Nombre,
+			C.Unidades,
+			P.Precio,
+			C.Unidades * P.Precio 'Total',
+			C.Fecha
+	  FROM	dbo.tCarrito C
+	  INNER JOIN dbo.tProducto P ON C.ConsecutivoProducto = P.Consecutivo
+	  WHERE ConsecutivoUsuario = @ConsecutivoUsuario
 
 END
 GO
@@ -338,6 +405,36 @@ BEGIN
 		AND Contrasenna = @Contrasenna
 		AND Activo = 1
 	
+END
+GO
+
+CREATE PROCEDURE [dbo].[RegistrarCarrito]
+	@ConsecutivoUsuario		bigint,
+	@ConsecutivoProducto	bigint,
+	@Unidades				int
+AS
+BEGIN
+	
+	IF(	SELECT COUNT(*) FROM tCarrito
+		WHERE	ConsecutivoUsuario = @ConsecutivoUsuario
+			AND ConsecutivoProducto = @ConsecutivoProducto) = 0
+	BEGIN
+
+		INSERT INTO dbo.tCarrito (ConsecutivoUsuario,ConsecutivoProducto,Unidades,Fecha)
+		VALUES (@ConsecutivoUsuario, @ConsecutivoProducto, @Unidades, GETDATE())
+
+	END
+	ELSE
+	BEGIN
+
+		UPDATE	dbo.tCarrito
+		SET		Unidades = @Unidades,
+				Fecha = GETDATE()
+		WHERE	ConsecutivoUsuario = @ConsecutivoUsuario
+			AND ConsecutivoProducto = @ConsecutivoProducto
+
+	END
+
 END
 GO
 
