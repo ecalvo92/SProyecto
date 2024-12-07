@@ -7,7 +7,6 @@ using SApi.Models;
 
 namespace SApi.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductoController : ControllerBase
@@ -18,6 +17,7 @@ namespace SApi.Controllers
             _conf = conf;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("ConsultarProductos")]
         public IActionResult ConsultarProductos()
@@ -42,6 +42,7 @@ namespace SApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         [Route("ConsultarProducto")]
         public IActionResult ConsultarProducto(int Consecutivo)
@@ -67,6 +68,7 @@ namespace SApi.Controllers
         }
 
 
+        [Authorize]
         [HttpPut]
         [Route("ActualizarEstadoProducto")]
         public IActionResult ActualizarEstadoProducto(Producto model)
@@ -94,6 +96,7 @@ namespace SApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         [Route("RegistrarProducto")]
         public IActionResult RegistrarProducto(Producto model)
@@ -118,6 +121,7 @@ namespace SApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut]
         [Route("ActualizarProducto")]
         public IActionResult ActualizarProducto(Producto model)
