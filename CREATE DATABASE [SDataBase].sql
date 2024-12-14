@@ -20,6 +20,20 @@ CREATE TABLE [dbo].[tCarrito](
 ) ON [PRIMARY]
 GO
 
+CREATE TABLE [dbo].[tDetalle](
+	[Consecutivo] [bigint] IDENTITY(1,1) NOT NULL,
+	[ConsecutivoFactura] [bigint] NOT NULL,
+	[Nombre] [varchar](50) NOT NULL,
+	[Precio] [decimal](18, 2) NOT NULL,
+	[Cantidad] [int] NOT NULL,
+	[Total] [decimal](18, 2) NOT NULL,
+ CONSTRAINT [PK_tDetalle] PRIMARY KEY CLUSTERED 
+(
+	[Consecutivo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
 CREATE TABLE [dbo].[tError](
 	[Consecutivo] [bigint] IDENTITY(1,1) NOT NULL,
 	[ConsecutivoUsuario] [bigint] NOT NULL,
@@ -31,6 +45,18 @@ CREATE TABLE [dbo].[tError](
 	[Consecutivo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[tFactura](
+	[Consecutivo] [bigint] IDENTITY(1,1) NOT NULL,
+	[ConsecutivoUsuario] [bigint] NOT NULL,
+	[Total] [decimal](18, 2) NOT NULL,
+	[Fecha] [datetime] NOT NULL,
+ CONSTRAINT [PK_tFactura] PRIMARY KEY CLUSTERED 
+(
+	[Consecutivo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 GO
 
 CREATE TABLE [dbo].[tProducto](
@@ -76,17 +102,34 @@ GO
 
 SET IDENTITY_INSERT [dbo].[tCarrito] ON 
 GO
-INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (1, 8, 5, 3, CAST(N'2024-12-07T10:31:38.127' AS DateTime))
-GO
-INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (2, 8, 4, 3, CAST(N'2024-12-07T10:31:31.267' AS DateTime))
-GO
-INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (3, 8, 6, 3, CAST(N'2024-12-07T10:31:41.473' AS DateTime))
-GO
-INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (4, 8, 7, 3, CAST(N'2024-12-07T10:31:44.527' AS DateTime))
-GO
-INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (5, 8, 8, 3, CAST(N'2024-12-07T10:31:47.440' AS DateTime))
+INSERT [dbo].[tCarrito] ([Consecutivo], [ConsecutivoUsuario], [ConsecutivoProducto], [Unidades], [Fecha]) VALUES (18, 9, 5, 4, CAST(N'2024-12-14T10:43:50.723' AS DateTime))
 GO
 SET IDENTITY_INSERT [dbo].[tCarrito] OFF
+GO
+
+SET IDENTITY_INSERT [dbo].[tDetalle] ON 
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (1, 1, N'Play Station 4', CAST(100000.00 AS Decimal(18, 2)), 1, CAST(100000.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (2, 1, N'Play Station 5', CAST(200000.00 AS Decimal(18, 2)), 1, CAST(200000.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (3, 1, N'Play Station 6', CAST(300000.00 AS Decimal(18, 2)), 1, CAST(300000.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (4, 1, N'Play Station 7', CAST(400000.00 AS Decimal(18, 2)), 1, CAST(400000.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (5, 1, N'Play Station 8', CAST(500000.00 AS Decimal(18, 2)), 1, CAST(500000.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (6, 2, N'Play Station 4', CAST(100000.00 AS Decimal(18, 2)), 2, CAST(200000.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (7, 2, N'Play Station 5', CAST(200000.00 AS Decimal(18, 2)), 2, CAST(400000.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (8, 3, N'Play Station 6', CAST(300000.00 AS Decimal(18, 2)), 2, CAST(600000.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (9, 3, N'Play Station 7', CAST(400000.00 AS Decimal(18, 2)), 2, CAST(800000.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[tDetalle] ([Consecutivo], [ConsecutivoFactura], [Nombre], [Precio], [Cantidad], [Total]) VALUES (10, 4, N'Play Station 8', CAST(500000.00 AS Decimal(18, 2)), 2, CAST(1000000.00 AS Decimal(18, 2)))
+GO
+SET IDENTITY_INSERT [dbo].[tDetalle] OFF
 GO
 
 SET IDENTITY_INSERT [dbo].[tError] ON 
@@ -102,17 +145,30 @@ GO
 SET IDENTITY_INSERT [dbo].[tError] OFF
 GO
 
+SET IDENTITY_INSERT [dbo].[tFactura] ON 
+GO
+INSERT [dbo].[tFactura] ([Consecutivo], [ConsecutivoUsuario], [Total], [Fecha]) VALUES (1, 8, CAST(1500000.00 AS Decimal(18, 2)), CAST(N'2024-12-14T10:15:19.647' AS DateTime))
+GO
+INSERT [dbo].[tFactura] ([Consecutivo], [ConsecutivoUsuario], [Total], [Fecha]) VALUES (2, 8, CAST(600000.00 AS Decimal(18, 2)), CAST(N'2024-12-14T10:16:50.087' AS DateTime))
+GO
+INSERT [dbo].[tFactura] ([Consecutivo], [ConsecutivoUsuario], [Total], [Fecha]) VALUES (3, 8, CAST(1400000.00 AS Decimal(18, 2)), CAST(N'2024-12-14T10:17:29.380' AS DateTime))
+GO
+INSERT [dbo].[tFactura] ([Consecutivo], [ConsecutivoUsuario], [Total], [Fecha]) VALUES (4, 9, CAST(1000000.00 AS Decimal(18, 2)), CAST(N'2024-12-14T10:18:18.980' AS DateTime))
+GO
+SET IDENTITY_INSERT [dbo].[tFactura] OFF
+GO
+
 SET IDENTITY_INSERT [dbo].[tProducto] ON 
 GO
-INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (4, N'Play Station 4', CAST(100000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (4, N'Play Station 4', CAST(100000.00 AS Decimal(18, 2)), 0, N'/products/', 1)
 GO
-INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (5, N'Play Station 5', CAST(200000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (5, N'Play Station 5', CAST(200000.00 AS Decimal(18, 2)), 18, N'/products/', 1)
 GO
-INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (6, N'Play Station 6', CAST(300000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (6, N'Play Station 6', CAST(300000.00 AS Decimal(18, 2)), 0, N'/products/', 1)
 GO
-INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (7, N'Play Station 7', CAST(400000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (7, N'Play Station 7', CAST(400000.00 AS Decimal(18, 2)), 0, N'/products/', 1)
 GO
-INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (8, N'Play Station 8', CAST(500000.00 AS Decimal(18, 2)), 3, N'/products/', 1)
+INSERT [dbo].[tProducto] ([Consecutivo], [Nombre], [Precio], [Inventario], [Imagen], [Activo]) VALUES (8, N'Play Station 8', CAST(500000.00 AS Decimal(18, 2)), 0, N'/products/', 1)
 GO
 SET IDENTITY_INSERT [dbo].[tProducto] OFF
 GO
@@ -159,6 +215,18 @@ ALTER TABLE [dbo].[tCarrito]  WITH CHECK ADD  CONSTRAINT [FK_tCarrito_tUsuario] 
 REFERENCES [dbo].[tUsuario] ([Consecutivo])
 GO
 ALTER TABLE [dbo].[tCarrito] CHECK CONSTRAINT [FK_tCarrito_tUsuario]
+GO
+
+ALTER TABLE [dbo].[tDetalle]  WITH CHECK ADD  CONSTRAINT [FK_tDetalle_tFactura] FOREIGN KEY([ConsecutivoFactura])
+REFERENCES [dbo].[tFactura] ([Consecutivo])
+GO
+ALTER TABLE [dbo].[tDetalle] CHECK CONSTRAINT [FK_tDetalle_tFactura]
+GO
+
+ALTER TABLE [dbo].[tFactura]  WITH CHECK ADD  CONSTRAINT [FK_tFactura_tUsuario] FOREIGN KEY([ConsecutivoUsuario])
+REFERENCES [dbo].[tUsuario] ([Consecutivo])
+GO
+ALTER TABLE [dbo].[tFactura] CHECK CONSTRAINT [FK_tFactura_tUsuario]
 GO
 
 ALTER TABLE [dbo].[tUsuario]  WITH CHECK ADD  CONSTRAINT [FK_tUsuario_tRol] FOREIGN KEY([ConsecutivoRol])
@@ -254,7 +322,7 @@ END
 GO
 
 CREATE PROCEDURE [dbo].[ConsultarCarrito]
-	@ConsecutivoUsuario BIGINT
+	@Consecutivo BIGINT
 AS
 BEGIN
 	
@@ -267,7 +335,39 @@ BEGIN
 			C.Fecha
 	  FROM	dbo.tCarrito C
 	  INNER JOIN dbo.tProducto P ON C.ConsecutivoProducto = P.Consecutivo
-	  WHERE ConsecutivoUsuario = @ConsecutivoUsuario
+	  WHERE ConsecutivoUsuario = @Consecutivo
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[ConsultarDetallesFactura]
+	@Consecutivo BIGINT
+AS
+BEGIN
+	
+	SELECT	D.ConsecutivoFactura 'Consecutivo',
+			D.Nombre,
+			D.Precio,
+			D.Cantidad 'Unidades',
+			D.Total
+	FROM	tDetalle D
+	WHERE	D.ConsecutivoFactura = @Consecutivo
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[ConsultarFacturas]
+	@Consecutivo BIGINT
+AS
+BEGIN
+	
+	SELECT	F.Consecutivo,
+			U.Nombre,
+			F.Total,
+			F.Fecha
+	FROM	tFactura F
+	INNER JOIN tUsuario U ON F.ConsecutivoUsuario = U.Consecutivo
+	WHERE	ConsecutivoUsuario = @Consecutivo
 
 END
 GO
@@ -408,6 +508,40 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE [dbo].[PagarCarrito]
+	@ConsecutivoUsuario BIGINT
+AS
+BEGIN
+	
+	--1
+	INSERT INTO dbo.tFactura (ConsecutivoUsuario,Total,Fecha)
+    SELECT	C.ConsecutivoUsuario, SUM(C.Unidades * P.Precio), GETDATE()
+	FROM	tCarrito C
+	INNER JOIN tProducto P ON C.ConsecutivoProducto = P.Consecutivo
+	WHERE  C.ConsecutivoUsuario = @ConsecutivoUsuario
+	GROUP BY C.ConsecutivoUsuario
+
+	--2
+	INSERT INTO dbo.tDetalle (ConsecutivoFactura,Nombre,Precio,Cantidad,Total)
+	SELECT	SCOPE_IDENTITY(), P.Nombre, P.Precio, C.Unidades, (C.Unidades * P.Precio)
+	FROM	tCarrito C
+	INNER JOIN tProducto P ON C.ConsecutivoProducto = P.Consecutivo
+	WHERE  C.ConsecutivoUsuario = @ConsecutivoUsuario
+
+	--3
+	UPDATE P
+	SET Inventario = Inventario - C.Unidades
+	FROM tProducto P
+	INNER JOIN tCarrito C ON P.Consecutivo = C.ConsecutivoProducto
+	WHERE  C.ConsecutivoUsuario = @ConsecutivoUsuario
+
+	--4
+	DELETE FROM tCarrito 
+	WHERE  ConsecutivoUsuario = @ConsecutivoUsuario
+
+END
+GO
+
 CREATE PROCEDURE [dbo].[RegistrarCarrito]
 	@ConsecutivoUsuario		bigint,
 	@ConsecutivoProducto	bigint,
@@ -463,6 +597,19 @@ BEGIN
 	VALUES (@Nombre, @Precio, @Inventario, @Imagen, 1)
 
 	SELECT @@IDENTITY Consecutivo
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[RemoverProductoCarrito]
+	@ConsecutivoUsuario BIGINT,
+	@ConsecutivoProducto BIGINT
+AS
+BEGIN
+	
+	DELETE	FROM tCarrito
+	WHERE	ConsecutivoUsuario = @ConsecutivoUsuario
+		AND	ConsecutivoProducto = @ConsecutivoProducto
 
 END
 GO

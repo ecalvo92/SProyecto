@@ -1,14 +1,23 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.AspNetCore.Mvc;
+using SWeb.Models;
+using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
+using static System.Net.WebRequestMethods;
+using System.Text.Json;
 
 namespace SWeb.Servicios
 {
     public class MetodosComunes : IMetodosComunes
     {
         private readonly IConfiguration _conf;
-        public MetodosComunes(IConfiguration conf)
+        private readonly IHttpClientFactory _http;
+        private readonly IHttpContextAccessor _accesor;
+        public MetodosComunes(IConfiguration conf, IHttpClientFactory http, IHttpContextAccessor accesor)
         {
             _conf = conf;
+            _http = http;
+            _accesor = accesor;
         }
 
         public string Encrypt(string texto)
@@ -62,6 +71,27 @@ namespace SWeb.Servicios
                         }
                     }
                 }
+            }
+        }
+
+        public List<Carrito> ConsultarCarrito()
+        {
+            using (var client = _http.CreateClient())
+            {
+                var Consecutivo = long.Parse(_accesor.HttpContext!.Session.GetString("Consecutivo")!.ToString());
+                var url = _conf.GetSection("Variables:UrlApi").Value + "Carrito/ConsultarCarrito?Consecutivo=" + Consecutivo;
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accesor.HttpContext.Session.GetString("TokenUsuario"));
+                var response = client.GetAsync(url).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    var datosContenido = JsonSerializer.Deserialize<List<Carrito>>((JsonElement)result.Contenido!);
+                    return datosContenido!.ToList();
+                }
+
+                return new List<Carrito>();
             }
         }
 

@@ -81,6 +81,10 @@ namespace SWeb.Controllers
                     HttpContext.Session.SetString("NombreUsuario", datosUsuario!.Nombre);
                     HttpContext.Session.SetString("TokenUsuario", datosUsuario!.Token);
                     HttpContext.Session.SetInt32("RolUsuario", datosUsuario!.ConsecutivoRol);
+
+                    var datosCarrito = _comunes.ConsultarCarrito();
+                    HttpContext.Session.SetString("Total", datosCarrito.Sum(x => x.Total).ToString());
+
                     return RedirectToAction("Inicio", "Home");
                 }
                 else
